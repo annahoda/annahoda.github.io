@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="./css/flip.css" />
+		<link rel="stylesheet" type="text/css" href="./css/main.css" />
+		<link rel="stylesheet" type="text/css" href="./css/header.css" />
+		<script type="text/javascript" src="./js/jquery-2.1.3.min.js"></script>
+		<script type="text/javascript" src="./user_config/Settings.js"></script>
+	</head>
+	<body>
+		<div id="header" class="center">
+			<div class="valign imgHeader"><img src="./images/application/header.png"/></div>
+			<div class="valign lastUpdated">Last Updated 05/24/2014</div>
+		</div>
+		<div id="tableContainer" class="center">
+			<div class="square flip-container" id="flipContainer1">
+				<div class="content flipper">
+					<div class="cell1 flip-front">
+						<div class="innerText"><span id="cell1"/></div>
+					</div>
+					<div class="flip-back">
+						<img id="imgFlip1"/>
+					</div>
+				</div>
+			</div>
+			<div class="square flip-container" id="flipContainer2">
+				<div class="content flipper">
+					<div class="cell2 flip-front">
+						<div class="innerText"><span id="cell2"/></div>
+					</div>
+					<div class="flip-back">
+						<img id="imgFlip2"/>
+					</div>
+				</div>
+			</div>
+			<div class="square flip-container" id="flipContainer3">
+				<div class="content flipper">
+					<div class="cell3 flip-front">
+						<div class="innerText"><span id="cell3"/></div>
+					</div>
+					<div class="flip-back">
+						<img id="imgFlip3"/>
+					</div>
+				</div>
+			</div>
+			<div class="square flip-container" id="flipContainer4">
+				<div class="content flipper">
+					<div class="cell4 flip-front">
+						<div class="innerText"><span id="cell4"/></div>
+					</div>
+					<div class="flip-back">
+						<img id="imgFlip4"/>
+					</div>
+				</div>
+			</div>
+			<div class="square flip-container" id="flipContainer5">
+				<div class="content flipper">
+					<div class="cell5 flip-front">
+						<div class="innerText"><span id="cell5"/></div>
+					</div>
+					<div class="flip-back">
+						<img id="imgFlip5"/>
+					</div>
+				</div>
+			</div>
+			<div class="square flip-container" id="flipContainer6">
+				<div class="content flipper">
+					<div class="cell6 flip-front">
+						<div class="innerText"><span id="cell6"/></div>
+					</div>
+					<div class="flip-back">
+						<img id="imgFlip6"/>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script>
+			window.onload = function() {
+				setMaxWidth();
+				setTimeout(randomImageFlip, 1000);
+				setInterval(randomImageFlip, flipTime * 1000);
+			}; 
+			
+			window.onresize = function() {
+				setMaxWidth();
+			};
+			
+			var dir = "./images/flip/";
+			var images = [];
+			$.ajax({
+				//This will retrieve the contents of the folder if the folder is configured as 'browsable'
+				url: dir,
+				success: function (data) {
+					//List all jpg or png file names in the page
+					$(data).find("a:contains(" + (supportedImageTypes[0]) + "), a:contains(" + (supportedImageTypes[1]) + ")").each(function () {
+						var filename = this.href.replace(window.location.host, "").replace("http:///", "");
+						images[images.length] = "./" + filename;
+					});
+				}
+			});
+			
+			$("#cell1").load("./user_config/Panel1.html");
+			$("#cell2").load("./user_config/Panel2.html");
+			$("#cell3").load("./user_config/Panel3.html");
+			$("#cell4").load("./user_config/Panel4.html");
+			$("#cell5").load("./user_config/Panel5.html");
+			$("#cell6").load("./user_config/Panel6.html");
+			
+			function setMaxWidth()
+			{
+				var tableWidth = document.getElementById("tableContainer").offsetWidth;
+				var headerHeight = document.getElementById("header").offsetHeight;
+				var maxTableWidth = ((window.innerHeight - headerHeight)/2) * 3 * (100/90);
+
+				document.getElementById("tableContainer").style.maxWidth = maxTableWidth + "px";
+				document.getElementById("header").style.maxWidth = maxTableWidth + "px";
+			}
+			
+			function randomIntFromInterval(min,max)
+			{
+				return Math.floor(Math.random()*(max-min+1)+min);
+			}
+			
+			function randomImageFlip() 
+			{
+				if (images.length > 0)
+				{
+					var randomImageNum = randomIntFromInterval(0, images.length - 1);
+					var randomTileNum = randomIntFromInterval(1, 6);
+					
+					var tileToFlipId = "#flipContainer" + randomTileNum;
+					var imgToFlipId = "imgFlip" + randomTileNum;
+					var flipImageSrc = images[randomImageNum];
+					
+					toggleFlip(imgToFlipId, tileToFlipId, flipImageSrc);
+					setTimeout(function() {toggleFlip(imgToFlipId, tileToFlipId, flipImageSrc);}, (flipTime * 1000)/2);
+				}
+			}
+			
+			function toggleFlip(imgToFlipId, tileToFlipId, flipImageSrc)
+			{
+				document.getElementById(imgToFlipId).src = flipImageSrc;
+				document.querySelector(tileToFlipId).classList.toggle("flip")
+			}
+		</script>
+	</body>
+</html>
